@@ -1,0 +1,22 @@
+[project]
+name = "rl-scalping"
+version = "0.1.0"
+description = "Agente de Reinforcement Learning (DQN) para scalping intradía con entorno Gymnasium"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.26",
+    "pandas>=2.0",
+    "gymnasium>=0.29",
+    "torch>=2.2",
+    "matplotlib>=3.8",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "jupyter", "yfinance"]
+
+[tool.setuptools]
+packages = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

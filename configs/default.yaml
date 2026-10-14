@@ -1,0 +1,73 @@
+# Configuración por defecto del proyecto de scalping con RL.
+# Todo lo que afecta resultados vive aquí (reproducibilidad). Se puede sobrescribir
+# desde la línea de comandos con:  --set dqn.lr=0.0003 --set env.fee_bps=2
+
+seed: 0
+
+data:
+  # Ruta al CSV del profesor (timestamp, open, high, low, close, volume).
+  # null => se genera un dataset SINTÉTICO (solo sirve para probar que el código corre).
+  path: null
+  # Parámetros del generador sintético (se ignoran si path != null)
+  synthetic:
+    n_days: 400
+    bars_per_day: 390
+    seed: 123
+  # División temporal por DÍAS completos (cronológica, sin barajar)
+  split:
+    train: 0.60
+    val: 0.20     # se usa para elegir hiperparámetros / versión de recompensa / checkpoint
+    test: 0.20    # held-out: SOLO evaluación final (evaluate.py --split test --final)
+  # Sesión de trading, para la variable "hora del día" y el cierre forzado
+  session_start: "09:30"
+  session_minutes: 390
+
+features:
+  ret_lags: [1, 5, 15]   # retornos logarítmicos a 1, 5 y 15 barras (dentro del mismo día)
+  sma_window: 30         # distancia precio / media móvil simple
+  vol_window: 20         # volatilidad realizada (desv. estándar de retornos de 1 barra)
+  rsi_window: 14
+  volume_window: 30      # z-score del volumen contra su historia reciente
+  clip: 5.0              # recorte de z-scores tras escalar (con media/desv. de TRAIN)
+
+env:
+  initial_capital: 100000
+  action_levels: [0.0, 0.5, 1.0]   # fracción del capital expuesta al activo
+  fee_bps: 1.0                     # comisión por unidad de turnover
+  slippage_bps: 1.0                # deslizamiento / medio spread por unidad de turnover
+  flat_at_close: true              # scalping: sin posiciones overnight (se cierra en la última barra del día)
+  execution_lag: 0                 # 0 = ejecuta al cierre de la barra de decisión; 1 = ejecuta una barra después
+  ruin_fraction: 0.5               # termina el episodio si el capital cae por debajo de esta fracción del inicial
+
+reward:
+  name: v1_return        # v1_return | v2_turnover | v3_risk
+  scale: 1000.0          # los retornos por barra son ~1e-4; se escalan para que DQN aprenda
+  turnover_penalty: 0.0002   # v2/v3: castigo extra por unidad de turnover (fracción del capital)
+  drawdown_penalty: 0.5      # v3: castigo por profundizar el drawdown dentro del episodio
+
+dqn:
+  hidden: [128, 128]
+  lr: 0.0001
+  batch_size: 128
+  gamma: 0.99
+  buffer_size: 100000
+  total_steps: 150000
+  learn_start: 5000
+  train_freq: 4
+  target_update: 1000
+  double: true
+  grad_clip: 10.0
+  eps_start: 1.0
+  eps_end: 0.05
+  eps_decay_fraction: 0.5     # fracción de total_steps durante la que decae epsilon
+  episode_len: 780            # ventana de entrenamiento (2 sesiones de 390 barras)
+  eval_every: 15000
+  patience: 6                 # evaluaciones sin mejora en validación => parada anticipada
+  selection_metric: return    # return | calmar  (métrica en VALIDACIÓN para elegir checkpoint)
+  device: cpu
+
+evaluation:
+  random_seeds: 30
+  bars_per_year: 98280        # 252 días * 390 barras (para anualizar Sharpe)
+  ma_fast: 10
+  ma_slow: 30
