@@ -9,6 +9,50 @@ condiciones y se evalúa en un período **held-out** que no se usa para tomar de
 > comprobar que todo corre. Los números obtenidos con ella **no son evidencia** sobre mercados reales.
 > Para el trabajo, apunta `data.path` al dataset del profesor.
 
+## Alcance de la actividad
+
+**Producto esperado:** código reproducible del agente y del entorno de simulación de inversión, acompañado de un
+informe (`informe/informe.md`) que documente:
+
+| Contenido del informe | Dónde está en el proyecto |
+|---|---|
+| a. La formulación del problema (estado y acciones) | Informe §2 · `src/data.py` (estado), `configs/default.yaml` → `env.action_levels` |
+| b. El diseño del entorno y de la función de recompensa | Informe §4 y §5 · `src/environment.py` |
+| c. El protocolo de evaluación | Informe §7 · split temporal en `src/data.py`, `src/evaluate.py` |
+| d. La comparación contra baselines | Informe §8 · `src/baselines.py`, `src/evaluate.py` |
+| e. La discusión y reflexión finales | Informe §9 y §10 |
+
+### Pasos sugeridos y dónde se cubre cada uno
+
+1. **Formular el estado (indicadores del precio) y las acciones** (p. ej. invertir 0 %, 50 % o 100 % del capital):
+   indicadores en `src/data.py`; acciones `{0, 0.5, 1.0}` en `configs/default.yaml`.
+2. **Implementar el entorno de simulación de inversión** en un activo, con un costo simple por operar:
+   `src/environment.py` (`fee_bps` + `slippage_bps` por unidad de turnover).
+3. **Diseñar e iterar la función de recompensa:** `reward.name` = `v1_return` → `v2_turnover` → `v3_risk`;
+   la comparación se genera con `python -m src.experiments`.
+4. **Entrenar el agente (DQN o PPO):** `src/agent.py` y `src/train.py` implementan **DQN** (con opción Double DQN).
+   PPO no está implementado; si se prefiere, hay que justificarlo en el informe.
+5. **Evaluar en datos no vistos (held-out) contra baselines simples** (comprar y mantener, agente aleatorio):
+   `python -m src.evaluate --run <run> --split test --final` (incluye además cruce de medias y B&H intradía).
+6. **Discutir y reflexionar sobre el proceso:** informe §9 (discusión y limitaciones) y §10 (reflexión individual).
+7. **Presentar el proyecto ante un panel virtual o foro:** no requiere código; las figuras y tablas salen de
+   `reports/` y de `runs/<run>/eval_test/`.
+
+### Recomendaciones
+
+* La rigurosidad metodológica vale más que un retorno alto: un agente que falla en los datos no vistos, pero con una
+  evaluación disciplinada, puede obtener la nota máxima.
+* **No realice ajustes sobre el periodo de evaluación final.** En este proyecto se aplica así: recompensa,
+  hiperparámetros y checkpoint se eligen solo con validación, y `--split test` exige el flag `--final` para evitar
+  usarlo por accidente. Corre la evaluación final una sola vez, con el agente ya definido.
+* Instrumento de evaluación: rúbrica (ver Estrategia de Evaluación, Rúbrica 4).
+
+### Material educativo
+
+* Sutton, R. S., & Barto, A. G. (2018). *Reinforcement learning: An introduction* (2.ª ed.). MIT Press.
+* Powell, W. B. (2019). *Reinforcement learning and stochastic optimization*. Wiley.
+* Schulman, J., et al. (2017). Proximal policy optimization algorithms. arXiv:1707.06347.
+
 ## 1. Instalación
 
 ```bash
