@@ -67,15 +67,19 @@ def train(cfg: dict, run_dir: str, verbose: bool = True, data: dict | None = Non
                 print(f"[{step:>7}] eps={eps:.2f} loss={row['loss']:.4f} val_ret={m['retorno_acumulado']:+.2%} "
                       f"dd={m['max_drawdown']:.2%} trades={m['n_cambios_posicion']} "
                       f"inv={m['pct_tiempo_invertido']:.0%}  ({time.time() - t0:.0f}s)", flush=True)
-            if score > best:
-                best, best_step, bad = score, step, 0
-                agent.save(os.path.join(run_dir, "best.pt"))
-            else:
-                bad += 1
-            if step >= c["learn_start"] and bad >= c["patience"]:
-                if verbose:
-                    print(f"Parada anticipada: sin mejora en validación durante {bad} evaluaciones.")
-                break
+            # Solo se elige checkpoint / cuenta la paciencia cuando ya terminó el decaimiento de ε.
+            # Antes, un checkpoint temprano casi sin entrenar que se queda 100 % fuera del mercado
+            # (retorno 0 %) ganaba por defecto contra políticas que operaban y perdían un poco.
+            if step >= decay_steps:
+                if score > best:
+                    best, best_step, bad = score, step, 0
+                    agent.save(os.path.join(run_dir, "best.pt"))
+                else:
+                    bad += 1
+                if bad >= c["patience"]:
+                    if verbose:
+                        print(f"Parada anticipada: sin mejora en validación durante {bad} evaluaciones.")
+                    break
 
     agent.save(os.path.join(run_dir, "final.pt"))
     if not os.path.exists(os.path.join(run_dir, "best.pt")):
