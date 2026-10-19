@@ -1,8 +1,6 @@
 # Agente de Reinforcement Learning para scalping intradía
 
-Proyecto de la actividad evaluativa de *Aprendizaje por refuerzo*. Un agente **DQN** aprende, con velas intradía,
-qué fracción de su capital exponer a un activo (0 %, 50 % o 100 %), pagando costos de transacción y cerrando
-posiciones al final de cada sesión (scalping, sin posiciones overnight). Se compara contra baselines simples bajo
+Este repositorio contiene un agente **DQN** aprende qué fracción de su capital exponer a un activo (0 %, 50 % o 100 %), pagando costos de transacción y cerrando posiciones al final de cada sesión (scalping). Se compara contra baselines simples bajo
 exactamente las mismas condiciones y se evalúa en un período *held-out* que no se usa para tomar ninguna decisión.
 
 **Pregunta central:** ¿puede un agente de RL aprender una estrategia de inversión que se comporte mejor que estrategias
@@ -333,14 +331,6 @@ Se documenta en el informe (§9 discusión y limitaciones, §10 reflexión indiv
 * Reflexión individual (5 preguntas): resultado sorprendente, decisión metodológica de mayor impacto, qué se cambiaría,
   comportamiento no explicado y diferencia entre lo aprendido en RL y su aplicación aquí.
 
-## Paso 7 · Presentar el proyecto
-
-Material para el panel o foro, todo generado por el código: curvas de capital (`equity_curves.png`), tabla vs baselines
-(`metrics.md`), posiciones del agente, comparación de recompensas (`reports/reward_comparison_val.*`), sensibilidad a
-costos y un ejemplo de comportamiento inesperado. Lleva la plantilla `informe/informe.md` completa.
-
----
-
 ## Instalación, datos y reproducibilidad
 
 ```bash
@@ -442,14 +432,6 @@ notebooks/colab_transfer_spy.ipynb      agentes entrenados con cripto evaluados 
 docs/figures/                           figuras del README (EDA, recompensas, evaluación y test de la corrida de ejemplo)
 informe/informe.md       plantilla del informe con todas las secciones pedidas
 ```
-
-## Recomendaciones metodológicas
-
-* La rigurosidad metodológica vale más que un retorno alto: un agente que falla en los datos no vistos, pero con una
-  evaluación disciplinada, puede obtener la nota máxima.
-* **No se hacen ajustes sobre el período de evaluación final.** Recompensa, hiperparámetros y checkpoint se eligen solo
-  con validación; el test se evalúa una única vez con el agente ya definido.
-* Instrumento de evaluación: rúbrica (ver Estrategia de Evaluación, Rúbrica 4).
 
 ## Referencias
 
