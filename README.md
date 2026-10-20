@@ -432,6 +432,20 @@ notebooks/colab_transfer_spy.ipynb      agentes entrenados con cripto evaluados 
 docs/figures/                           figuras del README (EDA, recompensas, evaluación y test de la corrida de ejemplo)
 informe/informe.md       plantilla del informe con todas las secciones pedidas
 ```
+## Reflexión 
+
+Empezamos con una pregunta sencilla: ¿puede un agente de aprendizaje por refuerzo decidir mejor que una regla simple cuánto dinero tener invertido? Con nuestros datos, la respuesta honesta es que no. En el periodo de prueba, que el agente nunca vio, comprar y mantener perdió -13,10 % con costos de 10 bps y nuestro agente perdió -20,57 %; con 2 bps el agente perdió -13,90 % frente a -13,03 %. Sí le fue mejor que la versión de comprar y mantener que cierra cada día, que es la comparación más justa porque tiene nuestra misma regla, pero no logramos superar la vara principal.
+
+Lo que más nos enseñó el proyecto fue el peso de los costos. La misma recompensa produjo comportamientos opuestos según lo que costaba operar: con 10 bps el agente aprendió casi a no hacer nada, y con 2 bps operó mucho más y en validación parecía ganarle al mercado. Cuando probamos ese mismo agente con costos más altos, la ventaja se esfumó antes de llegar a 10 bps. Entendimos que, en una estrategia que entra y sale todos los días, el costo no es un detalle del simulador: es la variable que define si la idea tiene sentido.
+
+La iteración de la recompensa también nos dejó lecciones. La primera versión, el retorno neto, llevaba al agente a operar de más. Al agregar un castigo por cambiar de posición, el comportamiento se volvió más ordenado y fue la versión que mejor funcionó con costos bajos. La tercera versión, que además castigaba las caídas, terminó en un agente que prefería no invertir nunca. Aprendimos que una recompensa puede ser razonable en el papel y aun así hacer que la mejor "jugada" sea quedarse quieto. Más que reward hacking en sentido estricto, fue un castigo mal calibrado frente al tamaño de las ganancias.
+
+Hay cosas que haríamos distinto. Primero, definiríamos el criterio de éxito antes de mirar resultados y fijaríamos un solo agente y un solo costo antes de abrir el test; nosotros terminamos evaluando el test dos veces, con agentes distintos, y eso debilita la conclusión. Segundo, trabajaríamos con datos reales de mercado: los resultados principales salieron de una serie sintética, útil para comprobar que todo funciona, pero no para decir nada sobre un mercado de verdad. Tercero, usaríamos más semillas, porque la diferencia entre ellas fue casi del mismo tamaño que el resultado promedio. Cuarto, elegiríamos el modelo con una medida que combine retorno y riesgo, y no solo el retorno.
+
+Nos queda un comportamiento sin explicar del todo: en un test bajista el agente podía salirse a 0 % y protegerse, pero con 2 bps estuvo invertido casi todo el tiempo. Creemos que aprendió un patrón del periodo de validación, que fue mixto, y no supo reconocer que el mercado había cambiado.
+
+La lección más importante fue sobre el planteamiento del problema. Pasamos mucho tiempo en el código, y está bien hecho: las pruebas automáticas muestran que el agente no usa información del futuro y que los costos se cobran bien. Pero las decisiones que más pesaron en el resultado no fueron técnicas, sino de planteamiento: operar dentro del día, qué costo suponer, qué contar como éxito y contra quién compararnos. Si volviéramos a empezar, dedicaríamos más tiempo a esas preguntas antes de entrenar el primer agente.
+
 
 ## Referencias
 
