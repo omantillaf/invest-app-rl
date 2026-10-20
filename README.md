@@ -333,7 +333,7 @@ Se documenta en el informe (§9 discusión y limitaciones, §10 reflexión indiv
   la pérdida de entrenamiento baja (sobreajuste con pocos datos).
 * Limitaciones: un solo activo, período acotado, no estacionariedad, costos supuestos, ejecución al cierre, varianza
   entre semillas, riesgo de sobreajustar a la validación.
-* Reflexión individual (5 preguntas): resultado sorprendente, decisión metodológica de mayor impacto, qué se cambiaría,
+* Reflexión (5 preguntas): resultado sorprendente, decisión metodológica de mayor impacto, qué se cambiaría,
   comportamiento no explicado y diferencia entre lo aprendido en RL y su aplicación aquí.
 
 ## Instalación, datos y reproducibilidad
