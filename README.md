@@ -1,3 +1,8 @@
+# Actividad calificable 4 — Proyecto final «Agente Inversor»
+
+Grupo 5
+Integrantes: Álvaro Jiménez, Claudia Soto, Juan Tovar, Oscar Mantilla, Pedro Martínez, Oscar Torres
+
 # Agente de Reinforcement Learning para scalping intradía
 
 Este repositorio contiene un agente **DQN** aprende qué fracción de su capital exponer a un activo (0 %, 50 % o 100 %), pagando costos de transacción y cerrando posiciones al final de cada sesión (scalping). Se compara contra baselines simples bajo
